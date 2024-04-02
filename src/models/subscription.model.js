@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { changeCurrentPassword } from "../controllers/user.controller";
 
 const subscriptionSchema = new Schema(
     {
@@ -14,6 +15,7 @@ const subscriptionSchema = new Schema(
     },{
         timestamps: true
     })
+
 
 
 export const Subscription = mongoose.model("Subscription" ,subscriptionSchema)

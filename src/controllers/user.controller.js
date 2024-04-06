@@ -260,28 +260,39 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(200, req.user, "current user fetched successfully");
+    .json(new ApiResponse(200, req.user, "current user fetched successfully"));
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
   const { fullname, email } = req.body;
 
   if (!fullname || !email) {
-    throw new ApiError(400, "All fields are reqired");
+    throw new ApiError(400, "All fields are required");
   }
-
-  const user = User.findByIdAndUpdate(
-    req.user?._id,
-    {
-      $set: { fullname, email: email },
-    },
-    { new: true }
-  ).select("-password");
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, user, "Account details updated successfully"));
-});
+  
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user?._id,
+      {
+        $set: { fullname, email: email },
+      },
+      { new: true }
+    ).select("-password");
+    
+    if(!user){
+      throw new ApiError(404, "User not found")
+    }
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user, "Account details updated successfully"));
+  }
+   catch (error) {
+    console.error("Error updating account details:" , error);
+    return res
+    .status(error.statusCode || 500)
+    .json(new ApiError(error.statusCode || 500, null , error.message || "Internal Server Error"))
+  }
+})
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
   const avatarLocalPath = req.file?.path;

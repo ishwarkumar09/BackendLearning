@@ -42,7 +42,7 @@ router.route("/change-password").post(verifyJwt, changeCurrentPassword);
 router.route("/current-user").get(verifyJwt, getCurrentUser);
 router.route("/update-account").patch(verifyJwt, updateAccountDetails);
 router
-  .route("/avatar")
+  .route("np,, /avatar")
   .patch(verifyJwt, upload.single("avatar"), updateUserAvatar);
 router
   .route("/cover-image")
